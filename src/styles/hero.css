@@ -1,0 +1,130 @@
+.hero-grid {
+  gap: 36px;
+}
+
+.hero-media,
+.hero-copy {
+  position: relative;
+}
+
+.hero-media {
+  min-height: 420px;
+  overflow: hidden;
+  background: var(--color-hero-surface);
+  transition:
+    box-shadow 220ms ease,
+    transform 220ms ease;
+}
+
+.hero-media__backdrop,
+.hero-media__glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.hero-media__backdrop {
+  z-index: 0;
+  background: var(--color-hero-backdrop);
+}
+
+.hero-media__frame {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  padding: clamp(22px, 4vw, 34px);
+  isolation: isolate;
+}
+
+.hero-media__portrait {
+  position: relative;
+  display: block;
+  width: min(76%, 340px);
+  padding: 0;
+  border: 0;
+  border-radius: 18px;
+  overflow: hidden;
+  background: transparent;
+  outline: none;
+  box-shadow: 0 22px 44px color-mix(in srgb, var(--color-panel-shadow) 140%, transparent);
+  isolation: isolate;
+  transition:
+    transform 240ms ease,
+    box-shadow 240ms ease;
+}
+
+.hero-media__portrait.is-touch {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hero-media__portrait:focus,
+.hero-media__portrait:active {
+  outline: none;
+}
+
+.hero-media__portrait:focus-visible {
+  box-shadow:
+    0 22px 44px color-mix(in srgb, var(--color-panel-shadow) 140%, transparent),
+    0 0 0 2px color-mix(in srgb, var(--color-text-strong) 20%, transparent);
+}
+
+.hero-media__image {
+  display: block;
+  width: 100%;
+  height: auto;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  image-rendering: auto;
+  transition: transform 280ms ease;
+}
+
+.hero-media__portrait:hover {
+  transform: translateY(-6px) scale(1.015);
+  box-shadow: 0 28px 54px color-mix(in srgb, var(--color-panel-shadow) 165%, transparent);
+}
+
+.hero-media__portrait:hover .hero-media__image {
+  transform: scale(1.02);
+}
+
+.hero-media__glow {
+  z-index: 1;
+  opacity: 0.36;
+  background: var(--color-hero-glow);
+  mix-blend-mode: screen;
+}
+
+.hero-copy {
+  max-width: 560px;
+}
+
+.hero-heading {
+  display: block;
+  margin-bottom: 18px;
+}
+
+.hero-copy h1 {
+  margin: 0;
+  color: var(--color-text-strong);
+  font-family: var(--font-display);
+  font-size: clamp(2.3rem, 6vw, 4.4rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  max-width: 11ch;
+}
+
+.hero-copy p {
+  margin: 0;
+  color: var(--color-text-soft);
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.hero-copy__lead {
+  max-width: 42ch;
+  margin-top: 0;
+  font-size: clamp(1rem, 2.1vw, 1.18rem);
+}

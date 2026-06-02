@@ -1,0 +1,134 @@
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-header-bg);
+  backdrop-filter: blur(14px);
+}
+
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 20px;
+  min-height: 74px;
+}
+
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.site-nav__link,
+.menu-toggle {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0;
+  background: transparent;
+  color: inherit;
+}
+
+.site-nav {
+  display: none;
+  align-items: center;
+  gap: 14px;
+}
+
+.site-nav__link,
+.mobile-menu__link {
+  position: relative;
+  padding: 10px 14px;
+  color: var(--color-text-soft);
+  font-size: 0.94rem;
+  font-weight: 600;
+  transition:
+    color 180ms ease,
+    opacity 180ms ease;
+}
+
+.site-nav__link::after,
+.mobile-menu__link::after {
+  content: '';
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 4px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.75);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 180ms ease;
+}
+
+.site-nav__link:hover,
+.site-nav__link.is-active,
+.mobile-menu__link:hover,
+.mobile-menu__link.is-active {
+  color: var(--color-text-strong);
+}
+
+.site-nav__link.is-active::after,
+.site-nav__link:hover::after,
+.mobile-menu__link.is-active::after,
+.mobile-menu__link:hover::after {
+  transform: scaleX(1);
+}
+
+.menu-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  color: var(--color-text-strong);
+  transition:
+    background 180ms ease,
+    color 180ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.menu-toggle:hover,
+.menu-toggle:active {
+  background: var(--color-soft-fill);
+}
+
+.mobile-menu {
+  width: min(100% - 32px, 1180px);
+  margin: 0 auto 14px;
+  padding: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 18px;
+  background: linear-gradient(180deg, var(--color-menu-bg-start), var(--color-menu-bg-end));
+  box-shadow: 0 16px 40px color-mix(in srgb, var(--color-panel-shadow) 100%, transparent);
+}
+
+.mobile-menu__link {
+  display: block;
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--color-text-soft);
+  text-align: left;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-menu__link + .mobile-menu__link {
+  margin-top: 4px;
+}
+
+.mobile-menu__link::after {
+  left: 16px;
+  right: 16px;
+  bottom: 8px;
+}
+
+.mobile-menu__link:hover,
+.mobile-menu__link:active,
+.mobile-menu__link.is-active {
+  background: var(--color-soft-fill);
+  color: var(--color-text-strong);
+}
