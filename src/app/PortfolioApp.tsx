@@ -1,22 +1,18 @@
 import { useEffect, useState, type ChangeEvent, type FormEvent } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
-import { Menu, X } from 'lucide-react'
+import { ArrowUpRight, Menu, X } from 'lucide-react'
+import { toast } from 'sonner'
 import heroArtwork from '../assets/1-8r e.jpg'
 import heroArtworkHover from '../assets/1-11r.jpg'
 import { Button } from '../components/ui/button'
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '../components/ui/dialog'
+import { Toaster } from '../components/ui/sonner'
 import { ThemeToggle, type Theme } from '../components/ui/theme-toggle'
 import { TypewriterText } from '../components/ui/typewriter-text'
 import {
-  aboutParagraphs,
   contactItems,
+  experienceEntries,
   navItems,
+  projectHighlights,
   sectionMotion,
   siteMeta,
   skills,
@@ -44,6 +40,16 @@ export function PortfolioApp() {
   const emailJsServiceId = import.meta.env.VITE_EMAILJS_SERVICE_ID
   const emailJsTemplateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID
   const emailJsPublicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+  const successToastStyle = {
+    background: '#052e16',
+    border: '1px solid #10b981',
+    color: '#d1fae5',
+  }
+  const errorToastStyle = {
+    background: '#450a0a',
+    border: '1px solid #ef4444',
+    color: '#fee2e2',
+  }
 
   const heroImageMotion = prefersReducedMotion
     ? {
@@ -122,6 +128,28 @@ export function PortfolioApp() {
     window.localStorage.setItem('portfolio-theme', theme)
   }, [theme])
 
+  useEffect(() => {
+    if (!contactModalOpen) {
+      return
+    }
+
+    const previousOverflow = document.body.style.overflow
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && !isSendingMessage) {
+        setContactModalOpen(false)
+      }
+    }
+
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [contactModalOpen, isSendingMessage])
+
   const scrollToSection = (sectionId: string) => {
     const section = document.getElementById(sectionId)
 
@@ -193,12 +221,12 @@ export function PortfolioApp() {
     setContactModalOpen(true)
   }
 
-  const handleContactModalChange = (open: boolean) => {
-    if (!open && isSendingMessage) {
+  const closeContactModal = () => {
+    if (isSendingMessage) {
       return
     }
 
-    setContactModalOpen(open)
+    setContactModalOpen(false)
   }
 
   const handleContactFieldChange = (
@@ -215,6 +243,10 @@ export function PortfolioApp() {
 
   const sendContactMessage = async () => {
     if (!emailJsServiceId || !emailJsTemplateId || !emailJsPublicKey) {
+      toast.error('EmailJS is not configured yet.', {
+        description: 'Add your EmailJS service ID, template ID, and public key in Vite env variables.',
+        style: errorToastStyle,
+      })
       setContactStatus({
         type: 'error',
         message:
@@ -250,19 +282,24 @@ export function PortfolioApp() {
         throw new Error(await response.text())
       }
 
-      setContactStatus({
-        type: 'success',
-        message: 'Message sent successfully. I will receive it in Gmail.',
+      setContactStatus({ type: 'idle', message: '' })
+      toast.success('Message sent successfully.', {
+        style: successToastStyle,
       })
       setContactForm({
         name: '',
         subject: '',
         message: '',
       })
+      setContactModalOpen(false)
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown EmailJS error'
 
+      toast.error('Sending failed.', {
+        description: errorMessage,
+        style: errorToastStyle,
+      })
       setContactStatus({
         type: 'error',
         message: `Sending failed. ${errorMessage}`,
@@ -353,27 +390,77 @@ export function PortfolioApp() {
 
         <motion.section className="page-section about-section" id="about" {...sectionMotion}>
           <div className="section-shell">
-            <div className="skills-cloud" aria-label="Technology stack">
-              {skills.map((skill) => (
-                <div
-                  key={skill.name}
-                  className={`skill-chip skill-chip--${skill.accent}`}
-                >
-                  {skill.name}
-                </div>
-              ))}
-            </div>
-
             <div className="about-grid">
               <div className="about-heading">
                 <h2>{siteMeta.aboutHeading}</h2>
                 <span className="section-rule" />
+                <p className="about-heading__lead">
+                  Full-stack experience across web applications, backend services, data-driven
+                  systems, and AI-assisted product features.
+                </p>
+                <div className="about-skill-list" aria-label="Technology stack">
+                  {skills.map((skill) => (
+                    <span
+                      key={skill.name}
+                      className={`about-skill about-skill--${skill.accent}`}
+                    >
+                      {skill.name}
+                    </span>
+                  ))}
+                </div>
               </div>
 
               <div className="about-body">
-                {aboutParagraphs.map((paragraph) => (
-                  <p key={paragraph}>{paragraph}</p>
-                ))}
+                <div className="experience-timeline">
+                  {experienceEntries.map((entry) => (
+                    <article key={`${entry.company}-${entry.title}`} className="experience-entry">
+                      <div className="experience-entry__marker" aria-hidden="true" />
+                      <div className="experience-entry__content">
+                        <div className="experience-entry__header">
+                          <h3>{entry.title}</h3>
+                          <p>
+                            {entry.company} • {entry.period}
+                          </p>
+                          <span>{entry.focus}</span>
+                        </div>
+
+                        <ul className="experience-entry__bullets">
+                          {entry.bullets.map((bullet) => (
+                            <li key={bullet}>{bullet}</li>
+                          ))}
+                        </ul>
+
+                        <div className="experience-projects">
+                          {entry.projects.map((project) => (
+                            <section key={project.name} className="experience-project">
+                              <h4>{project.name}</h4>
+                              <ul>
+                                {project.bullets.map((bullet) => (
+                                  <li key={bullet}>{bullet}</li>
+                                ))}
+                              </ul>
+                            </section>
+                          ))}
+                        </div>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+
+                <article className="experience-secondary">
+                  <div className="experience-secondary__marker" aria-hidden="true" />
+                  <div className="experience-secondary__content">
+                    <h3>Technical Project</h3>
+                    <div className="project-highlight-list">
+                      {projectHighlights.map((project) => (
+                        <section key={project.name} className="project-highlight">
+                          <h4>{project.name}</h4>
+                          <p>{project.description}</p>
+                        </section>
+                      ))}
+                    </div>
+                  </div>
+                </article>
               </div>
             </div>
           </div>
@@ -388,11 +475,13 @@ export function PortfolioApp() {
 
               <div className="contact-actions">
                 <Button
-                  variant="default"
+                  type="button"
+                  variant="ghost"
                   className="contact-cta"
                   onClick={openContactModal}
                 >
-                  Connect Now
+                  <span>Connect Now</span>
+                  <ArrowUpRight size={18} />
                 </Button>
               </div>
 
@@ -434,92 +523,127 @@ export function PortfolioApp() {
         </motion.section>
       </main>
 
-      <Dialog open={contactModalOpen} onOpenChange={handleContactModalChange}>
-        <DialogContent
-          className="contact-modal"
-          style={{
-            background:
-              'linear-gradient(180deg, var(--color-menu-bg-start), var(--color-menu-bg-end))',
-          }}
-        >
-          <DialogHeader className="contact-modal__header">
-            <div>
-              <p className="contact-modal__eyebrow">Direct Message</p>
-              <DialogTitle id="contact-modal-title">Connect With Me</DialogTitle>
-            </div>
+      <AnimatePresence>
+        {contactModalOpen ? (
+          <motion.div
+            className="contact-modal-layer"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <button
+              type="button"
+              className="contact-modal__backdrop"
+              aria-label="Close contact form"
+              onClick={closeContactModal}
+            />
 
-            <DialogClose asChild>
-              <Button
-                size="icon"
-                variant="ghost"
-                className="contact-modal__close"
-                aria-label="Close contact form"
-                disabled={isSendingMessage}
-              >
-                <X size={18} />
-              </Button>
-            </DialogClose>
-          </DialogHeader>
+            <motion.div
+              className="contact-modal"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="contact-modal-title"
+              aria-describedby="contact-modal-description"
+              initial={{ opacity: 0, y: 20, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 12, scale: 0.98 }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.2, ease: 'easeOut' }}
+              style={{
+                background:
+                  'linear-gradient(180deg, var(--color-menu-bg-start), var(--color-menu-bg-end))',
+              }}
+            >
+              <div className="contact-modal__header">
+                <div>
+                  <p className="contact-modal__eyebrow">Direct Message</p>
+                  <h3 id="contact-modal-title">Connect With Me</h3>
+                  <p
+                    id="contact-modal-description"
+                    className="contact-modal__description"
+                  >
+                    Send a direct message about opportunities, collaborations, or project work.
+                  </p>
+                </div>
 
-          <form className="contact-form" onSubmit={handleContactSubmit}>
-            <label className="contact-form__field">
-              <span>Name</span>
-              <input
-                name="name"
-                value={contactForm.name}
-                onChange={handleContactFieldChange}
-                placeholder="Your name"
-                required
-              />
-            </label>
-
-            <label className="contact-form__field">
-              <span>Subject</span>
-              <input
-                name="subject"
-                value={contactForm.subject}
-                onChange={handleContactFieldChange}
-                placeholder="What would you like to discuss?"
-                required
-              />
-            </label>
-
-            <label className="contact-form__field">
-              <span>Message</span>
-              <textarea
-                name="message"
-                value={contactForm.message}
-                onChange={handleContactFieldChange}
-                placeholder="Write your message here"
-                rows={6}
-                required
-              />
-            </label>
-
-            <div className="contact-form__actions">
-              <DialogClose asChild>
                 <Button
-                  type="button"
+                  size="icon"
                   variant="ghost"
-                  className="contact-form__secondary"
+                  className="contact-modal__close"
+                  aria-label="Close contact form"
                   disabled={isSendingMessage}
+                  onClick={closeContactModal}
                 >
-                  Cancel
+                  <X size={18} />
                 </Button>
-              </DialogClose>
-              <Button type="submit" variant="default" disabled={isSendingMessage}>
-                {isSendingMessage ? 'Sending...' : 'Send Message'}
-              </Button>
-            </div>
+              </div>
 
-            {contactStatus.type !== 'idle' ? (
-              <p className={`contact-form__status contact-form__status--${contactStatus.type}`}>
-                {contactStatus.message}
-              </p>
-            ) : null}
-          </form>
-        </DialogContent>
-      </Dialog>
+              <form className="contact-form" onSubmit={handleContactSubmit}>
+                <label className="contact-form__field">
+                  <span>Name</span>
+                  <input
+                    name="name"
+                    value={contactForm.name}
+                    onChange={handleContactFieldChange}
+                    placeholder="Your name"
+                    required
+                  />
+                </label>
+
+                <label className="contact-form__field">
+                  <span>Subject</span>
+                  <input
+                    name="subject"
+                    value={contactForm.subject}
+                    onChange={handleContactFieldChange}
+                    placeholder="What would you like to discuss?"
+                    required
+                  />
+                </label>
+
+                <label className="contact-form__field">
+                  <span>Message</span>
+                  <textarea
+                    name="message"
+                    value={contactForm.message}
+                    onChange={handleContactFieldChange}
+                    placeholder="Write your message here"
+                    rows={6}
+                    required
+                  />
+                </label>
+
+                <div className="contact-form__actions">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="contact-form__secondary"
+                    disabled={isSendingMessage}
+                    onClick={closeContactModal}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    variant="default"
+                    className="contact-form__primary"
+                    disabled={isSendingMessage}
+                  >
+                    {isSendingMessage ? 'Sending...' : 'Send Message'}
+                  </Button>
+                </div>
+
+                {contactStatus.type !== 'idle' ? (
+                  <p className={`contact-form__status contact-form__status--${contactStatus.type}`}>
+                    {contactStatus.message}
+                  </p>
+                ) : null}
+              </form>
+            </motion.div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
+
+      <Toaster theme={theme} />
     </div>
   )
 }

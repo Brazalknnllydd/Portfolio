@@ -19,8 +19,13 @@
   }
 
   .about-grid {
-    grid-template-columns: minmax(220px, 0.38fr) minmax(0, 0.62fr);
+    grid-template-columns: minmax(220px, 0.34fr) minmax(0, 0.66fr);
     align-items: start;
+  }
+
+  .about-heading {
+    position: sticky;
+    top: 106px;
   }
 
   .hero-media {
@@ -92,19 +97,48 @@
     box-shadow: 0 18px 34px rgba(0, 0, 0, 0.24);
   }
 
-  .skills-cloud {
-    justify-content: flex-start;
-    gap: 8px 10px;
-    margin-bottom: 32px;
-  }
-
-  .skill-chip {
-    padding: 10px 14px;
-    font-size: clamp(1rem, 5vw, 1.3rem);
-  }
-
   .about-body {
     gap: 16px;
+  }
+
+  .about-skill-list {
+    margin-top: 20px;
+    gap: 8px;
+  }
+
+  .about-skill {
+    min-height: 32px;
+    padding: 7px 11px;
+    font-size: 0.8rem;
+  }
+
+  .experience-timeline {
+    padding-left: 24px;
+  }
+
+  .experience-secondary {
+    padding-left: 24px;
+  }
+
+  .experience-entry__marker {
+    left: -24px;
+    width: 16px;
+    height: 16px;
+  }
+
+  .experience-project,
+  .project-highlight {
+    padding: 0;
+    border-radius: 0;
+  }
+
+  .experience-secondary::before {
+    left: 7px;
+  }
+
+  .experience-secondary__marker {
+    width: 16px;
+    height: 16px;
   }
 
   .contact-list {
@@ -147,8 +181,15 @@
   }
 
   .hero-copy p,
-  .about-body p,
+  .about-heading__lead,
   .contact-copy p {
+    font-size: 0.95rem;
+    line-height: 1.65;
+  }
+
+  .experience-entry__bullets,
+  .experience-project ul,
+  .project-highlight p {
     font-size: 0.95rem;
     line-height: 1.65;
   }
@@ -168,5 +209,38 @@
   .section-rule {
     width: 72px;
     margin: 14px 0 18px;
+  }
+
+  .experience-timeline {
+    padding-left: 20px;
+  }
+
+  .experience-secondary {
+    padding-left: 20px;
+  }
+
+  .experience-timeline::before {
+    left: 6px;
+  }
+
+  .experience-entry__marker {
+    left: -20px;
+    width: 12px;
+    height: 12px;
+    box-shadow:
+      0 0 0 4px color-mix(in srgb, var(--color-bg) 82%, transparent),
+      0 10px 20px rgba(113, 74, 255, 0.16);
+  }
+
+  .experience-secondary::before {
+    left: 6px;
+  }
+
+  .experience-secondary__marker {
+    width: 12px;
+    height: 12px;
+    box-shadow:
+      0 0 0 4px color-mix(in srgb, var(--color-bg) 82%, transparent),
+      0 10px 20px rgba(113, 74, 255, 0.16);
   }
 }

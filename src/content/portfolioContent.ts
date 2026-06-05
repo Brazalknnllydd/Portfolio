@@ -17,6 +17,25 @@ export type SkillItem = {
   accent: 'slate' | 'gold' | 'violet' | 'blue'
 }
 
+export type ExperienceProject = {
+  name: string
+  bullets: string[]
+}
+
+export type ExperienceEntry = {
+  title: string
+  company: string
+  period: string
+  focus: string
+  bullets: string[]
+  projects: ExperienceProject[]
+}
+
+export type ProjectHighlight = {
+  name: string
+  description: string
+}
+
 export type ContactItem = {
   label: string
   value: string
@@ -31,7 +50,7 @@ export const siteMeta = {
   heroTitle: 'Hi, Welcome to my portfolio',
   heroDescription:
     "I'm Ken Lloyd P. Brazal, a software engineer who builds full-stack web and desktop applications with clean design, reliable functionality, and smart technology.",
-  aboutHeading: 'About Me',
+  aboutHeading: 'Experience',
   contactHeading: 'My Contact',
   contactDescription:
     'Thank you for visiting my portfolio. If you have any inquiries, professional opportunities, or would like to discuss a project, please feel free to get in touch.',
@@ -39,7 +58,7 @@ export const siteMeta = {
 
 export const navItems: NavItem[] = [
   { id: 'home', label: 'Home' },
-  { id: 'about', label: 'About Me' },
+  { id: 'about', label: 'Experience' },
   { id: 'contact', label: 'Contact' },
 ]
 
@@ -55,11 +74,36 @@ export const skills: SkillItem[] = [
   { name: 'C#', accent: 'violet' },
 ]
 
-export const aboutParagraphs = [
-  'I am a Software Developer with hands-on experience in building full-stack web applications, desktop systems, and database-driven solutions. My technical background includes React, Laravel, PHP, C#, WinForms, PostgreSQL, MySQL, Python, and API integration, with practical experience in designing interfaces, structuring databases, developing backend services, and implementing AI-powered features using Gemini API and Hugging Face API.',
-  'At Sprobe Inc, I worked as a Software Engineer Intern on OptiFlow, a billability tracking management tool where I contributed to frontend development, backend services, database validation, and intelligent chatbot integration.',
-  'I also worked on ReStyle, our college capstone project, an AI-powered wardrobe and clothing recommendation web system that helps users organize their wardrobe and receive personalized outfit suggestions. This project strengthened my experience in full-stack development, database design, AI-based recommendation logic, and building practical features focused on user needs.',
-  'I approach development with a strong focus on clean implementation, practical problem-solving, and continuous improvement. I enjoy building reliable, user-centered software solutions and collaborating with teams to turn ideas into functional systems.',
+export const experienceEntries: ExperienceEntry[] = [
+  {
+    title: 'Software Engineer Intern',
+    company: 'Sprobe Inc.',
+    period: '2026',
+    focus: 'Full-Stack Development',
+    bullets: [
+      'Worked closely with a project manager and engineers to deliver feature updates and support database validation.',
+      'Contributed to ongoing development of core product pages, including client management and engineer directory features.',
+    ],
+    projects: [
+      {
+        name: 'OptiFlow - Billability Tracking Management Tool',
+        bullets: [
+          'Implemented an intelligent Gemini chatbot by integrating the Gemini API for automated user assistance.',
+          'Built backend services with Laravel, PHP, and Python to process complex tracking data.',
+          'Developed the frontend in React and managed application data through PostgreSQL.',
+          'Supported feature execution across frontend, backend, and database layers in a collaborative delivery workflow.',
+        ],
+      },
+    ],
+  },
+]
+
+export const projectHighlights: ProjectHighlight[] = [
+  {
+    name: 'ReStyle - AI-Powered Wardrobe System (Academic Project)',
+    description:
+      'Developed with Laravel, PHP, MySQL, Tailwind, and React, integrating the Hugging Face API to support AI-inspired clothing recommendation logic, virtual wardrobe management, and more accurate outfit matching while contributing in the "Hipster" role focused on UI/UX design and feature structuring.',
+  },
 ]
 
 export const contactItems: ContactItem[] = [
